@@ -2,9 +2,11 @@
 <html>
 	<head>
 		<script type='text/javascript' src='../js/index.js'></script>
+		<script type='text/javascript' src='../js/pixel.js'></script>
 	</head>
-	<body>
+	<body onload='init()''>
 		<canvas id='imageCanvas' width='500' height='500' style='border: 1px solid #000000;'></canvas>
 		<input type='file' id='imageUpload' onchange='drawImage()'>
+		<button type='button' onclick='pixelate()'>Pixelate</button>
 	</body>
 </html>
