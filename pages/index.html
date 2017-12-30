@@ -5,8 +5,9 @@
 		<script type='text/javascript' src='../js/pixel.js'></script>
 	</head>
 	<body onload='init()''>
-		<canvas id='imageCanvas' width='500' height='500' style='border: 1px solid #000000;'></canvas>
-		<input type='file' id='imageUpload' onchange='drawImage()'>
-		<button type='button' onclick='pixelate()'>Pixelate</button>
+		<canvas id='imageCanvas' width='500' height='500'></canvas><br>
+		<input type='file' id='imageUpload' onchange='drawImage()'><br>
+		<input id='pixelSizeSlider' onchange='pixelSizeChange()' type='range' min='1' max='50' value='1'><br>
+		<button type='button' onclick='switchPixelateSide()'>Flip side</button>
 	</body>
 </html>
