@@ -1,9 +1,13 @@
+// TODO: Clean up everything
+
 let hasImage = false;
 let fileInput = null;
 let imageCanvas = null;
+let actualCanvas = null;
 let pixelSizeSlider = null;
 let origImageData = null;
 let currImageData = null;
+let origActualData = null;
 let pixelateAbove = true;
 const points = [null, null];
 const reader = new FileReader();
@@ -12,7 +16,7 @@ const maxSize = 500;
 
 const switchPixelateSide = () => {
 	pixelateAbove = !pixelateAbove;
-	pixelate();
+	pixelate(true);
 	if (points[0]) {
 		drawPoint('#FF0000', points[0]);
 	}
@@ -100,12 +104,13 @@ const drawPoint = (color, point) => {
 const init = () => {
 	fileInput = document.getElementById('imageUpload');
 	imageCanvas = document.getElementById('imageCanvas');
+	actualCanvas = document.getElementById('actualCanvas');
 	imageCanvas.addEventListener('click', (event) => {
 		const rect = imageCanvas.getBoundingClientRect();
 		const mouseX = event.clientX - rect.left;
 		const mouseY = event.clientY - rect.top;
 		if (points[1] || points[0] == null) {
-			pixelate();
+			pixelate(true);
 			points[0] = {
 				x: mouseX,
 				y: mouseY
@@ -121,21 +126,22 @@ const init = () => {
 				x: mouseX,
 				y: mouseY
 			};
-			pixelate();
+			pixelate(true);
 			drawPoint('#FF0000', points[0]);
 			drawPoint('#0000FF', points[1]);
 
 			// formula for a line: y - y_0 = m * (x - x_0)
 			drawLine();
 		}
-	})
+	});
 	pixelSizeSlider = document.getElementById('pixelSizeSlider');
 	pixelSize = parseInt(pixelSizeSlider.value);
+	document.getElementById('downloadLink').addEventListener('click', downloadImage);
 }
 
 const pixelSizeChange = () => {
 	pixelSize = parseInt(pixelSizeSlider.value);
-	pixelate();
+	pixelate(true);
 	const context = imageCanvas.getContext('2d');
 	if (points[0]) {
 		drawPoint('#FF0000', points[0]);
@@ -152,6 +158,13 @@ const drawImage = () => {
 	if (fileInput.files && fileInput.files[0] && fileInput.files[0].type.match('image.*')) {
 		reader.onload = (event) => {
 			img.onload = () => {
+
+				// actual full-size image
+				actualCanvas.width = img.width;
+				actualCanvas.height = img.height;
+				actualCanvas.getContext('2d').drawImage(img, 0, 0, actualCanvas.width, actualCanvas.height);
+				origActualData = actualCanvas.getContext('2d').getImageData(0, 0, actualCanvas.width, actualCanvas.height);
+
 				let newWidth = maxSize;
 				let newHeight = maxSize;
 				if (img.width > maxSize || img.height > maxSize) {
@@ -164,10 +177,18 @@ const drawImage = () => {
 				origImageData = imageCanvas.getContext('2d').getImageData(0, 0, imageCanvas.width, imageCanvas.height);
 				currImageData = origImageData;
 				hasImage = true;
-				pixelate();
+				pixelate(true);
 			};
 			img.src = event.target.result;
 		};
 		reader.readAsDataURL(fileInput.files[0]); // need to check that file is image
 	}
 };
+
+const downloadImage = () => {
+	pixelate(false);
+	if (hasImage) {
+		const img = actualCanvas.toDataURL('image/png');
+		document.getElementById('downloadLink').href = img;
+	}
+}
