@@ -70,9 +70,6 @@ const pixelate = (preview) => {
 				}
 			}
 		}
-		if (preview) {
-			currImageData = newImageData;
-		}
 		context.putImageData(newImageData, 0, 0);
 	}
 }

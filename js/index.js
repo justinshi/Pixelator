@@ -6,7 +6,6 @@ let imageCanvas = null;
 let actualCanvas = null;
 let pixelSizeSlider = null;
 let origImageData = null;
-let currImageData = null;
 let origActualData = null;
 let pixelateAbove = true;
 const points = [null, null];
@@ -103,6 +102,8 @@ const drawPoint = (color, point) => {
 
 const init = () => {
 	fileInput = document.getElementById('imageUpload');
+	fileInput.value = null;
+	hasImage = false;
 	imageCanvas = document.getElementById('imageCanvas');
 	actualCanvas = document.getElementById('actualCanvas');
 	imageCanvas.addEventListener('click', (event) => {
@@ -155,7 +156,7 @@ const pixelSizeChange = () => {
 }
 
 const drawImage = () => {
-	if (fileInput.files && fileInput.files[0] && fileInput.files[0].type.match('image.*')) {
+	if (fileInput && fileInput.files && fileInput.files[0] && fileInput.files[0].type.match('image.*')) {
 		reader.onload = (event) => {
 			img.onload = () => {
 
@@ -175,7 +176,6 @@ const drawImage = () => {
 				imageCanvas.height = newHeight;
 				imageCanvas.getContext('2d').drawImage(img, 0, 0, newWidth, newHeight);
 				origImageData = imageCanvas.getContext('2d').getImageData(0, 0, imageCanvas.width, imageCanvas.height);
-				currImageData = origImageData;
 				hasImage = true;
 				pixelate(true);
 			};
